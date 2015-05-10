@@ -36,7 +36,7 @@ def TwoTRNCells(s,t):
 
     g_nat = 60.5 
     g_nap = 0.0
-    g_kd = 60.0 #60.5 in the paper?
+    g_kd = 60.0 # 60.5 in the paper?
     g_kt = 5.0 
     g_k2 = .5 
     g_ar = 0.025 
@@ -306,6 +306,7 @@ y_now = s0[0]
 v_total1 = np.zeros([int(tstop/deltat)])
 v_total2 = np.zeros([int(tstop/deltat)])
 
+# 
 
 g12 = g12I[5]
 g21 = g21I[0]
