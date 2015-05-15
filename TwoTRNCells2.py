@@ -264,8 +264,8 @@ T2 = 25             #fall time constant  #5e-3 / 20e-3 ?? ~50 ms rise.
 #s0 = si.loadmat('s00.mat')
 s0 = np.load('s0.npy') # I loaded and saved the input as a numpy vector .npy.
 
-#test
 s0[-1]=0 #why must this latter value be set to 0?
+
 #initial conditions are set equal for both neurons.
 #s0[20:33]=s0[0:13]  #ICs for cell 2. #python-corrected indices!
 
@@ -275,16 +275,6 @@ iDC2 = .1
 istart = 10   
 istop = np.min([200, tmax - 10])   
 
-#g12=.015 
-#g21=.75*g12 
-
-gE = np.arange(0.01,0.02+0.001,0.001) #.015 is a good median value
-fA = np.arange(0.5,1.5+0.05,0.05)
-
-#g12I=.015*(.5:1/(length(fA)-1)/2:1);
-step = 1.0/(len(fA)-1)/2.0
-g12I=.015*np.arange(0.5,1+step,step)
-g21I=g12I[::-1]   #flip vector left-right
 
 #Alpha/Beta Synapse
 A= .25 
@@ -292,13 +282,26 @@ tA= 100
 A2=.18 
 tA2=100 
 
-fbase='VaryG12_Ap2' 
+#fbase='VaryG12_Ap2' 
 
-# asymmetry of the gap junction
+gE = np.arange(0.01,0.02+0.001,0.001) #.015 is a good median value
+fA = np.arange(0.5,1.5+0.05,0.05)
+
+
+# asymmetry of the gap junction?
+
+#g12=.015 
+#g21=.75*g12 
+
 #g21=.015 
 #g12=g21*fA[9] # for all fA
 
-tstop = 60
+#g12I=.015*(.5:1/(length(fA)-1)/2:1);
+step = 1.0/(len(fA)-1)/2.0
+g12I=.015*np.arange(0.5,1+step,step)
+g21I=g12I[::-1]   #flip vector left-right
+
+tstop = 60 # ms?
 deltat = 0.001
 y_now = s0[0]
 
@@ -322,11 +325,23 @@ for tstep in range(0,int(tstop/deltat)):
 
 mpl.figure()
 mpl.subplot(2,1,1)
+mpl.title('Neuron 1')
+mpl.ylabel('mV')
 mpl.plot(np.arange(len(v_total1)),v_total1)
+labelstepsize = np.floor(50/deltat)
+tickplaces = np.arange(0,(tstop/deltat)+labelstepsize,labelstepsize)
+mpl.xticks(tickplaces, ['0','50','100','150','200','250'])
+
 mpl.subplot(2,1,2)
+mpl.title('Neuron 2')
+mpl.ylabel('mV')
 mpl.plot(np.arange(len(v_total2)),v_total2,'r')
+mpl.xticks()
+mpl.xlabel('time(ms)')
+mpl.xticks(tickplaces, ['0','50','100','150','200','250'])
 
 mpl.show()
+
 
 #################
 
