@@ -301,7 +301,7 @@ step = 1.0/(len(fA)-1)/2.0
 g12I=.015*np.arange(0.5,1+step,step)
 g21I=g12I[::-1]   #flip vector left-right
 
-tstop = 60 # ms?
+tstop = 100 # ms?
 deltat = 0.001
 y_now = s0[0]
 
@@ -328,9 +328,9 @@ mpl.subplot(2,1,1)
 mpl.title('Neuron 1')
 mpl.ylabel('mV')
 mpl.plot(np.arange(len(v_total1)),v_total1)
-labelstepsize = np.floor(50/deltat)
+labelstepsize = np.floor(20/deltat)
 tickplaces = np.arange(0,(tstop/deltat)+labelstepsize,labelstepsize)
-mpl.xticks(tickplaces, ['0','50','100','150','200','250'])
+mpl.xticks(tickplaces, ['0','20','40','60','80','100'])
 
 mpl.subplot(2,1,2)
 mpl.title('Neuron 2')
@@ -338,7 +338,7 @@ mpl.ylabel('mV')
 mpl.plot(np.arange(len(v_total2)),v_total2,'r')
 mpl.xticks()
 mpl.xlabel('time(ms)')
-mpl.xticks(tickplaces, ['0','50','100','150','200','250'])
+mpl.xticks(tickplaces, ['0','20','40','60','80','100'])
 
 mpl.show()
 
