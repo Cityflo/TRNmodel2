@@ -25,7 +25,6 @@ import matplotlib.pyplot as mpl
 ##print("%g %g" % (r.t, r.y))
 
 
-#ds = TwoTRNCells(t,s)    
 def TwoTRNCells(s,t):  
     
     #this is the python function that determines the differential equations for all the variables. The input is the initial or previous parameter state for all parameters in the vector s, and the timestep t.
@@ -61,7 +60,6 @@ def TwoTRNCells(s,t):
     
     # 1 ms square pulse representing presynaptic spike
     K = 1/(1+ np.exp(-(vpre+50.0)/2))   
-    
     ds[12] = T1*K*(1-s[12]) - T2*s[12] 
 
 
@@ -75,22 +73,22 @@ def TwoTRNCells(s,t):
     ds[32] = T1*K2*(1-s[32]) - T2*s[32] 
 
     #Regular sodium
-    minf_nat = 1/(1 +  np.exp((-v - 38)/10)) 
+    minf_nat = 1/(1 +  np.exp((-v - 38)/10.0)) 
     if v<= -30:
-        tau_m_nat = 0.0125 + .1525* np.exp((v+30)/10) 
+        tau_m_nat = 0.0125 + .1525* np.exp((v+30)/10.0) 
     else:
-        tau_m_nat = 0.02 + .145* np.exp((-v-30)/10) 
+        tau_m_nat = 0.02 + .145* np.exp((-v-30)/10.0) 
     
     hinf_nat = 1/(1 +  np.exp((v + 58.3)/6.7)) 
     tau_h_nat = 0.225 + 1.125/(1+ np.exp((v+37)/15)) 
     dm_nat = -(1/tau_m_nat) * (s[1] - minf_nat) 
     dh_nat = -(1/tau_h_nat) * (s[2] - hinf_nat) 
 
-    minf_nat2 = 1/(1 +  np.exp((-v2 - 38)/10)) 
+    minf_nat2 = 1/(1 +  np.exp((-v2 - 38)/10.0)) 
     if v2<= -30:
-        tau_m_nat2 = 0.0125 + .1525* np.exp((v2+30)/10) 
+        tau_m_nat2 = 0.0125 + .1525* np.exp((v2+30)/10.0) 
     else:
-        tau_m_nat2 = 0.02 + .145* np.exp((-v2-30)/10) 
+        tau_m_nat2 = 0.02 + .145* np.exp((-v2-30)/10.0) 
     
     hinf_nat2 = 1/(1 +  np.exp((v2 + 58.3)/6.7)) 
     tau_h_nat2 = 0.225 + 1.125/(1+ np.exp((v2+37)/15)) 
@@ -117,17 +115,17 @@ def TwoTRNCells(s,t):
     #Delayed rectifier
     minf_kd = 1/(1+ np.exp((-v-27)/11.5)) 
     if v<= -10:
-        tau_m_kd = 0.25 + 4.35* np.exp((v+10)/10) 
+        tau_m_kd = 0.25 + 4.35* np.exp((v+10)/10.0) 
     else:
-        tau_m_kd = 0.25 + 4.35* np.exp((-v-10)/10) 
+        tau_m_kd = 0.25 + 4.35* np.exp((-v-10)/10.0) 
     
     dm_kd = -(1/tau_m_kd) * (s[4] - minf_kd) 
 
     minf_kd2 = 1/(1+ np.exp((-v2-27)/11.5)) 
     if v2<= -10:
-        tau_m_kd2 = 0.25 + 4.35* np.exp((v2+10)/10) 
+        tau_m_kd2 = 0.25 + 4.35* np.exp((v2+10)/10.0) 
     else:
-        tau_m_kd2 = 0.25 + 4.35* np.exp((-v2-10)/10) 
+        tau_m_kd2 = 0.25 + 4.35* np.exp((-v2-10)/10.0) 
     
     dm_kd2 = -(1/tau_m_kd2) * (s[24] - minf_kd2) 
 
@@ -266,8 +264,10 @@ T2 = 25             #fall time constant  #5e-3 / 20e-3 ?? ~50 ms rise.
 #s0 = si.loadmat('s00.mat')
 s0 = np.load('s0.npy') # I loaded and saved the input as a numpy vector .npy.
 
-s0[-1]=0 
-s0[20:33]=s0[0:13]  #ICs for cell 2. #python-corrected indices!
+#test
+s0[-1]=0 #why must this latter value be set to 0?
+#initial conditions are set equal for both neurons.
+#s0[20:33]=s0[0:13]  #ICs for cell 2. #python-corrected indices!
 
 #DC pulse
 iDC = .1             # uA/cm2   DC  0.25 is ~TR for burst; 
@@ -284,7 +284,7 @@ fA = np.arange(0.5,1.5+0.05,0.05)
 #g12I=.015*(.5:1/(length(fA)-1)/2:1);
 step = 1.0/(len(fA)-1)/2.0
 g12I=.015*np.arange(0.5,1+step,step)
-g21I=g12I[::-1] #flip left-right
+g21I=g12I[::-1]   #flip vector left-right
 
 #Alpha/Beta Synapse
 A= .25 
@@ -302,16 +302,13 @@ tstop = 60
 deltat = 0.001
 y_now = s0[0]
 
-#print np.size(y_now[11])
-v_total1 = np.zeros([int(tstop/deltat)])
-v_total2 = np.zeros([int(tstop/deltat)])
-
-# 
-
-g12 = g12I[5]
+g12 = g12I[0]
 g21 = g21I[0]
 #A2=fA[0]*A what is this ??
 
+# integration of the diff. equation
+v_total1 = np.zeros([int(tstop/deltat)])
+v_total2 = np.zeros([int(tstop/deltat)])
 for tstep in range(0,int(tstop/deltat)):
     
     # midpoint 'integration' method
